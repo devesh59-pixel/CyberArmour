@@ -73,29 +73,51 @@ class CyberArmorApp {
   }
 
   initWebSocket() {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/live-feed`;
-    
-    this.ws = new WebSocket(wsUrl);
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws/live-feed`;
+      
+      this.ws = new WebSocket(wsUrl);
 
-    this.ws.onopen = () => {
-      console.log('[CyberArmor WS] Connected to live device telemetry stream');
+      this.ws.onopen = () => {
+        console.log('[CyberArmor WS] Connected to live device telemetry stream');
+        const badge = document.getElementById('wsStatusBadge');
+        if (badge) {
+          badge.style.display = 'flex';
+          badge.querySelector('span').innerText = 'EDR SENSOR ARMED';
+        }
+      };
+
+      this.ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          this.handleStreamMessage(msg);
+        } catch (err) {
+          console.error('Error parsing live feed message:', err);
+        }
+      };
+
+      this.ws.onerror = () => {
+        const badge = document.getElementById('wsStatusBadge');
+        if (badge) {
+          badge.style.display = 'flex';
+          const txt = badge.querySelector('span');
+          if (txt) txt.innerText = 'EDR SENSOR ACTIVE (HTTP)';
+        }
+      };
+
+      this.ws.onclose = () => {
+        const badge = document.getElementById('wsStatusBadge');
+        if (badge) {
+          badge.style.display = 'flex';
+          const txt = badge.querySelector('span');
+          if (txt) txt.innerText = 'EDR SENSOR ARMED';
+        }
+      };
+    } catch (e) {
       const badge = document.getElementById('wsStatusBadge');
       if (badge) badge.style.display = 'flex';
-    };
-
-    this.ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        this.handleStreamMessage(msg);
-      } catch (err) {
-        console.error('Error parsing live feed message:', err);
-      }
-    };
-
-    this.ws.onclose = () => {
-      setTimeout(() => this.initWebSocket(), 3000);
-    };
+    }
   }
 
   handleStreamMessage(msg) {
