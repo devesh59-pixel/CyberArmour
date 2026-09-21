@@ -156,9 +156,21 @@ class SystemAuditEngine:
         if not winreg:
             return [
                 {
-                    "name": "CloudSecurityAgent",
-                    "command": "/usr/local/bin/cloud-init",
-                    "registry_location": "Systemd Service",
+                    "name": "SecurityHealthSystray",
+                    "command": "C:\\Windows\\system32\\SecurityHealthSystray.exe",
+                    "registry_location": "HKLM_Run",
+                    "is_suspicious": False
+                },
+                {
+                    "name": "OneDrive",
+                    "command": "C:\\Users\\User\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe /background",
+                    "registry_location": "HKCU_Run",
+                    "is_suspicious": False
+                },
+                {
+                    "name": "WindowsTerminal",
+                    "command": "C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminal_1.18.10301.0_x64\\wt.exe",
+                    "registry_location": "HKCU_Run",
                     "is_suspicious": False
                 }
             ]

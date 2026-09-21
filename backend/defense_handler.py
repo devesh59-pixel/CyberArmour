@@ -108,6 +108,10 @@ class DefenseMatrixManager:
         
         return entry
 
+    def is_blocked(self, ip: str) -> bool:
+        """Checks if an IP is currently blocked in the active defense matrix."""
+        return ip in self.blocked_ips
+
     def unblock_ip(self, ip: str) -> bool:
         """Removes an IP block rule from Windows Defender Firewall."""
         if ip in self.blocked_ips:
