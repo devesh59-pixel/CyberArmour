@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberArmor Pro EDR | Autonomous Endpoint Defense & Threat Hunting</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Cyber EDR Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Top Cyber EDR Product Header -->
+    <header class="soc-header">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <i class="fa-solid fa-shield-virus"></i>
+        </div>
+        <div class="brand-text">
+          <h1>CYBERARMOR PRO EDR</h1>
+          <p>AUTONOMOUS DEVICE DEFENSE & THREAT HUNTING PLATFORM</p>
+        </div>
+      </div>
+
+      <div class="header-status-group">
+        <div class="status-badge" id="wsStatusBadge">
+          <div class="status-dot"></div>
+          <span>EDR SENSOR ARMED</span>
+        </div>
+
+        <div class="threat-gauge">
+          <span style="color:var(--text-muted); font-size:11px;">HEALTH GRADE:</span>
+          <span class="badge-tag badge-Low" id="deviceSecurityGradeBadge">A+</span>
+        </div>
+
+        <div class="status-badge" style="background:rgba(25,36,77,0.4); border-color:var(--border-glass); color:var(--text-secondary);">
+          <i class="fa-regular fa-clock" style="color:var(--neon-cyan);"></i>
+          <span id="socClock">00:00:00 UTC</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Emergency Airgap Isolation Button -->
+        <button class="action-btn-sm" id="airgapBtn" onclick="toggleAirgapIsolation(true)" style="background:rgba(255,0,85,0.2); border-color:var(--neon-crimson); color:#fff;" title="Emergency Host Airgap Isolation">
+          <i class="fa-solid fa-plane-slash"></i> AIRGAP ISOLATE
+        </button>
+        <!-- AI Copilot Trigger -->
+        <button class="btn-copilot" onclick="toggleCopilotDrawer()" title="Open GenAI Security Copilot">
+          <i class="fa-solid fa-brain"></i> AI COPILOT
+        </button>
+        <button class="btn-icon active" id="toggleSoundBtn" title="Toggle Audible Alerts">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+        <button class="btn-icon" id="toggleAutoShieldBtn" title="Toggle Autonomous Host Shield">
+          <i class="fa-solid fa-shield-halved"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Product Navigation Tabs -->
+    <nav class="nav-tabs-bar">
+      <div class="nav-tab active" data-tab="device-tab" onclick="switchTab('device-tab')">
+        <i class="fa-solid fa-laptop-medical"></i> Device Health Center
+      </div>
+      <div class="nav-tab" data-tab="process-tab" onclick="switchTab('process-tab')">
+        <i class="fa-solid fa-microchip"></i> Process Sentinel (EDR)
+      </div>
+      <div class="nav-tab" data-tab="tree-tab" onclick="switchTab('tree-tab')">
+        <i class="fa-solid fa-sitemap"></i> Process Attack Tree (RCA)
+      </div>
+      <div class="nav-tab" data-tab="sockets-tab" onclick="switchTab('sockets-tab')">
+        <i class="fa-solid fa-network-wired"></i> Network Sockets & Ports
+      </div>
+      <div class="nav-tab" data-tab="logs-tab" onclick="switchTab('logs-tab')">
+        <i class="fa-solid fa-list-check"></i> Windows & Server Logs
+      </div>
+      <div class="nav-tab" data-tab="audit-tab" onclick="switchTab('audit-tab')">
+        <i class="fa-solid fa-shield-halved"></i> System Hardening Audit
+      </div>
+      <div class="nav-tab" data-tab="quarantine-tab" onclick="switchTab('quarantine-tab')">
+        <i class="fa-solid fa-vault"></i> Firewall & Quarantine
+      </div>
+      <div class="nav-tab" data-tab="report-tab" onclick="switchTab('report-tab')">
+        <i class="fa-solid fa-file-invoice"></i> Executive Audit Report
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Host Summary & KPI Grid -->
+      <section class="kpi-grid">
+        <div class="glass-card kpi-card">
+          <div class="kpi-icon icon-blue">
+            <i class="fa-solid fa-heart-pulse"></i>
+          </div>
+          <div class="kpi-data">
+            <h3>Device Health Score</h3>
+            <div class="kpi-value" id="deviceHealthScoreVal" style="color:var(--neon-cyan);">--/100</div>
+            <div class="kpi-sub">Continuous Host Assessment</div>
+          </div>
+        </div>
+
+        <div class="glass-card kpi-card">
+          <div class="kpi-icon icon-purple">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <div class="kpi-data">
+            <h3>Active Sockets</h3>
+            <div class="kpi-value" id="kpiActiveSockets">--</div>
+            <div class="kpi-sub">Live TCP/UDP Sockets</div>
+          </div>
+        </div>
+
+        <div class="glass-card kpi-card">
+          <div class="kpi-icon icon-crimson">
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <div class="kpi-data">
+            <h3>Firewall Quarantines</h3>
+            <div class="kpi-value" id="kpiFirewallRules" style="color:var(--neon-crimson);">0</div>
+            <div class="kpi-sub">Enforced on Windows Firewall</div>
+          </div>
+        </div>
+
+        <div class="glass-card kpi-card">
+          <div class="kpi-icon icon-emerald">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div class="kpi-data">
+            <h3>Ransomware Shield</h3>
+            <div class="kpi-value" style="color:var(--neon-emerald); font-size:20px;">ARMED</div>
+            <div class="kpi-sub">Canary Honey-Traps Active</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 1: DEVICE HEALTH CENTER (OVERVIEW)
+      =========================================== -->
+      <div class="tab-pane active" id="device-tab">
+        <div class="soc-dashboard-grid">
+          
+          <!-- Left Column: Host System Overview & Resource Gauges -->
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fa-solid fa-desktop" style="color:var(--neon-cyan);"></i>
+                  Protected Host System Telemetry
+                </div>
+                <button class="action-btn-primary" onclick="loadDeviceOverview()">Refresh</button>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
+                <div style="background:rgba(5,7,17,0.6); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-glass);">
+                  <div style="font-size:11px; color:var(--text-muted);">HOSTNAME</div>
+                  <div style="font-size:14px; font-weight:700; color:#fff; font-family:var(--font-mono); margin-top:2px;" id="deviceHostName">--</div>
+                </div>
+                <div style="background:rgba(5,7,17,0.6); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-glass);">
+                  <div style="font-size:11px; color:var(--text-muted);">PRIMARY IP ADDRESS</div>
+                  <div style="font-size:14px; font-weight:700; color:var(--neon-cyan); font-family:var(--font-mono); margin-top:2px;" id="deviceIpAddress">--</div>
+                </div>
+              </div>
+
+              <div style="background:rgba(5,7,17,0.6); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-glass); margin-bottom:20px;">
+                <div style="font-size:11px; color:var(--text-muted);">OPERATING SYSTEM</div>
+                <div style="font-size:13px; font-weight:600; color:#cbd5e1; margin-top:2px;" id="deviceOsInfo">--</div>
+              </div>
+
+              <!-- Live Resource Meters -->
+              <h4 style="font-size:13px; color:var(--text-secondary); text-transform:uppercase; margin-bottom:12px;">Live Resource Allocation</h4>
+              
+              <div style="display:flex; flex-direction:column; gap:14px;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                    <span style="color:#fff;"><i class="fa-solid fa-microchip" style="color:var(--neon-cyan); margin-right:6px;"></i> CPU Load</span>
+                    <span id="cpuPercentVal" style="font-family:var(--font-mono); color:var(--neon-cyan);">--%</span>
+                  </div>
+                  <div class="feature-bar-wrap" style="margin:0; height:10px;">
+                    <div class="feature-bar-fill" id="cpuBarFill" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                    <span style="color:#fff;"><i class="fa-solid fa-memory" style="color:var(--neon-purple); margin-right:6px;"></i> Physical RAM</span>
+                    <span id="ramPercentVal" style="font-family:var(--font-mono); color:var(--neon-purple);">--%</span>
+                  </div>
+                  <div class="feature-bar-wrap" style="margin:0; height:10px;">
+                    <div class="feature-bar-fill" id="ramBarFill" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                    <span style="color:#fff;"><i class="fa-solid fa-hard-drive" style="color:var(--neon-emerald); margin-right:6px;"></i> System Storage Disk (C:)</span>
+                    <span id="diskPercentVal" style="font-family:var(--font-mono); color:var(--neon-emerald);">--%</span>
+                  </div>
+                  <div class="feature-bar-wrap" style="margin:0; height:10px;">
+                    <div class="feature-bar-fill" id="diskBarFill" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Ransomware Canary Shield & Binary Inspector -->
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            
+            <!-- Ransomware Canary Card -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fa-solid fa-vault" style="color:var(--neon-emerald);"></i>
+                  Anti-Ransomware Canary Honey-Trap
+                </div>
+                <span class="badge-tag badge-Low">ACTIVE</span>
+              </div>
+              <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:14px;">
+                Decoy documents are actively guarded in <code>.cyberarmor_canary/</code>. If an unverified process attempts mass modification or file encryption, the offending PID is terminated instantly.
+              </p>
+              <div style="display:flex; gap:10px;">
+                <button class="action-btn-primary" onclick="testCanarySimulation()" style="flex:1;">
+                  🧪 Simulate Ransomware Attack on Canary
+                </button>
+              </div>
+            </div>
+
+            <!-- Binary Entropy & SHA-256 Inspector -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title" style="font-size:13px;">
+                  <i class="fa-solid fa-fingerprint" style="color:var(--neon-cyan);"></i>
+                  Binary Threat Intel & Entropy Inspector
+                </div>
+              </div>
+              <p style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">
+                Calculates Shannon Entropy and SHA-256 hash to detect packed malware droppers.
+              </p>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="binaryPathInput" class="form-input" placeholder="e.g. C:\Windows\explorer.exe" style="font-size:12px;">
+                <button class="action-btn-primary" onclick="inspectBinaryFile()" style="white-space:nowrap;">Analyze</button>
+              </div>
+              <div id="binaryInspectResult" style="margin-top:10px;"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 2: PROCESS SENTINEL (PROCESS MANAGER)
+      =========================================== -->
+      <div class="tab-pane" id="process-tab">
+        <div class="glass-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <i class="fa-solid fa-microchip" style="color:var(--neon-cyan);"></i>
+                Live Host Process Sentinel
+              </div>
+              <div class="card-subtitle">Real live running processes with AI behavioral risk assessment</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span id="processTotalCount" class="badge-tag badge-Medium">-- Active</span>
+              <span id="processHighRiskCount" class="badge-tag badge-Critical">0 Flagged</span>
+              <button class="action-btn-primary" onclick="loadDeviceProcesses()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div style="display:flex; gap:12px; margin-bottom:16px;">
+            <input type="text" id="processSearchInput" class="form-input" placeholder="Search by process name, PID, or executable path..." oninput="filterProcesses()" style="flex:1;">
+            <select id="processRiskFilter" class="form-input" style="width:160px;" onchange="filterProcesses()">
+              <option value="ALL">All Risk Levels</option>
+              <option value="CRITICAL">Critical Risk Only</option>
+              <option value="HIGH">High Risk Only</option>
+              <option value="MEDIUM">Medium Risk Only</option>
+              <option value="LOW">Low Risk Only</option>
+            </select>
+          </div>
+
+          <!-- Processes Table -->
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>PID</th>
+                  <th>Process Name & Path</th>
+                  <th>Risk Level</th>
+                  <th>CPU %</th>
+                  <th>RAM %</th>
+                  <th>AI Risk Rationale</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="processTableBody">
+                <tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Loading live host processes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 3: PROCESS ATTACK TREE (RCA)
+      =========================================== -->
+      <div class="tab-pane" id="tree-tab">
+        <div style="display:grid; grid-template-columns:1.8fr 1fr; gap:20px;">
+          
+          <div class="glass-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-solid fa-sitemap" style="color:var(--neon-purple);"></i>
+                  Process Execution Attack Tree (Root Cause Analysis)
+                </div>
+                <div class="card-subtitle">Parent-Child Execution Lineage & Process Ancestry DAG</div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <input type="number" id="treePidInput" class="form-input" placeholder="Enter PID" style="width:120px; font-size:12px;">
+                <button class="action-btn-primary" onclick="loadProcessTree(document.getElementById('treePidInput').value)">Trace Tree</button>
+              </div>
+            </div>
+
+            <div id="processTreeCanvasContainer" style="min-height:450px;">
+              <div style="text-align:center; padding:50px; color:var(--text-muted);">Loading execution tree...</div>
+            </div>
+          </div>
+
+          <!-- Right: Process Node Forensics Panel -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-magnifying-glass-chart" style="color:var(--neon-cyan);"></i>
+                Process Node Deep Forensics
+              </div>
+            </div>
+            <div id="processTreeDetailsPanel">
+              <div style="text-align:center; padding:40px; color:var(--text-muted); font-size:12px;">
+                Click any process node in the tree to inspect full command-line arguments, SHA-256 checksum, and memory footprint.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 4: NETWORK SOCKETS & PORT ARMOR
+      =========================================== -->
+      <div class="tab-pane" id="sockets-tab">
+        <div style="display:grid; grid-template-columns:1.8fr 1fr; gap:20px;">
+          
+          <div class="glass-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-solid fa-network-wired" style="color:var(--neon-blue);"></i>
+                  Active Network Connections
+                </div>
+                <div class="card-subtitle">Real TCP/UDP sockets mapped to host processes</div>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span id="connEstCount" class="badge-tag badge-Low">-- Established</span>
+                <button class="action-btn-primary" onclick="loadDeviceConnections()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Proto</th>
+                    <th>Local Address</th>
+                    <th>Remote Address</th>
+                    <th>State</th>
+                    <th>Owning Process</th>
+                    <th>Risk</th>
+                    <th>Firewall Action</th>
+                  </tr>
+                </thead>
+                <tbody id="connectionsTableBody">
+                  <tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Scanning active sockets...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Open Listening Ports -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-solid fa-tower-broadcast" style="color:var(--neon-cyan);"></i>
+                  Open Listening Ports
+                </div>
+                <div class="card-subtitle">Services listening for inbound traffic</div>
+              </div>
+              <span id="connListenCount" class="badge-tag badge-Medium">-- Listening</span>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px; max-height:500px; overflow-y:auto;" id="listeningPortsList">
+              <div style="text-align:center; padding:30px; color:var(--text-muted); font-size:12px;">Discovering listening ports...</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 5: WINDOWS & SERVER LOGS
+      =========================================== -->
+      <div class="tab-pane" id="logs-tab">
+        <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:20px;">
+          
+          <div class="glass-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-brands fa-windows" style="color:var(--neon-cyan);"></i>
+                  Live Windows Event Logs
+                </div>
+                <div class="card-subtitle">Direct feed from Windows Event Log channels</div>
+              </div>
+              <span id="eventLogsTotalCount" class="badge-tag badge-Low">-- Events</span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:14px;">
+              <select id="eventLogChannelSelect" class="form-input" style="width:140px;" onchange="loadWindowsEventLogs(this.value)">
+                <option value="System">System Log</option>
+                <option value="Application">Application Log</option>
+                <option value="Security">Security Log</option>
+              </select>
+              <input type="text" id="eventLogSearch" class="form-input" placeholder="Search event ID or text..." oninput="filterEventLogs()" style="flex:1;">
+              <select id="eventLogLevelFilter" class="form-input" style="width:120px;" onchange="filterEventLogs()">
+                <option value="ALL">All Levels</option>
+                <option value="Error">Error Only</option>
+                <option value="Warning">Warning Only</option>
+                <option value="Information">Information</option>
+              </select>
+            </div>
+
+            <div id="eventLogsContainer" style="max-height:550px; overflow-y:auto;">
+              <div style="text-align:center; padding:40px; color:var(--text-muted);">Loading Windows Event Logs...</div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-file-waveform" style="color:var(--neon-purple);"></i>
+                Local Server Log File Tailer
+              </div>
+            </div>
+            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
+              Tail any real log file on this machine (e.g. Apache, Nginx, Node, Python, IIS). The AI engine will parse lines and flag threat signatures.
+            </p>
+
+            <div class="form-group">
+              <label class="form-label">Absolute File Path on Host</label>
+              <input type="text" id="localLogPathInput" class="form-input" value="sample_logs.csv" placeholder="e.g. sample_logs.csv">
+            </div>
+
+            <button class="sim-btn" onclick="tailLocalLogFile()" style="margin-top:0; margin-bottom:16px;">
+              <i class="fa-solid fa-bolt"></i> Tail & Inspect Log File
+            </button>
+
+            <div id="localLogResultContainer"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 6: SYSTEM HARDENING AUDIT
+      =========================================== -->
+      <div class="tab-pane" id="audit-tab">
+        <div class="glass-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <i class="fa-solid fa-stethoscope" style="color:var(--neon-emerald);"></i>
+                Host Security Hardening & Vulnerability Audit
+              </div>
+              <div class="card-subtitle">Audits Windows Defender, Registry Run Persistence, Temp Binaries & Open Ports</div>
+            </div>
+            <button class="action-btn-primary" onclick="runSystemAudit()"><i class="fa-solid fa-play"></i> Re-Run Full Audit</button>
+          </div>
+
+          <div id="auditResultsContainer">
+            <div style="text-align:center; padding:50px; color:var(--text-muted);">Auditing device security...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 7: FIREWALL & QUARANTINE VAULT
+      =========================================== -->
+      <div class="tab-pane" id="quarantine-tab">
+        <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:20px;">
+          
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-ban" style="color:var(--neon-crimson);"></i>
+                Windows Defender Firewall Blocklist
+              </div>
+              <button class="action-btn-primary" onclick="loadFirewallAndQuarantine()">Refresh</button>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-bottom:14px;">
+              <input type="text" id="customBanIpInput" class="form-input" placeholder="Enter IP to block in Windows Firewall (e.g. 198.51.100.22)">
+              <button class="action-btn-sm" onclick="blockCustomIp()" style="white-space:nowrap; padding:8px 14px;">Block at Firewall</button>
+            </div>
+
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Blocked IP</th>
+                    <th>Threat Type</th>
+                    <th>Reason</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="fwRulesTableBody">
+                  <tr><td colspan="5" style="text-align:center; padding:25px; color:var(--text-muted);">Loading active rules...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-vault" style="color:var(--neon-emerald);"></i>
+                Quarantine Isolation Vault
+              </div>
+            </div>
+            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px;">
+              Suspicious binaries moved here are isolated with <code>.locked</code> extensions in a secure sandbox directory.
+            </p>
+
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Filename</th>
+                    <th>Original Path</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="quarantineTableBody">
+                  <tr><td colspan="4" style="text-align:center; padding:25px; color:var(--text-muted);">Quarantine vault is empty.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 8: EXECUTIVE AUDIT REPORT
+      =========================================== -->
+      <div class="tab-pane" id="report-tab">
+        <div id="reportContainer">
+          <div style="text-align:center; padding:50px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--neon-cyan);"></i>
+            <p style="margin-top:12px; color:var(--text-secondary);">Generating Device Security Compliance Report...</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- GENAI SECURITY COPILOT SLIDE-OVER DRAWER -->
+  <div class="copilot-drawer" id="copilotDrawer">
+    <div class="copilot-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-brain" style="color:var(--neon-purple); font-size:18px;"></i>
+        <div>
+          <strong style="color:#fff; font-size:14px;">CyberArmor AI Copilot</strong>
+          <div style="font-size:10px; color:var(--neon-cyan); font-family:var(--font-mono);">LIVE TELEMETRY GROUNDED</div>
+        </div>
+      </div>
+      <button class="btn-icon" onclick="toggleCopilotDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Suggested Quick Prompts -->
+    <div style="padding:12px 20px; border-bottom:1px solid var(--border-glass); display:flex; gap:8px; overflow-x:auto;">
+      <button class="chip-btn" onclick="sendCopilotMessage('Is my device safe right now?')">🛡️ Is device safe?</button>
+      <button class="chip-btn" onclick="sendCopilotMessage('Check open listening ports')">🌐 Check open ports</button>
+      <button class="chip-btn" onclick="sendCopilotMessage('Check ransomware canary status')">🪤 Ransomware shield</button>
+    </div>
+
+    <!-- Messages Feed -->
+    <div class="copilot-messages" id="copilotMessages">
+      <div style="align-self:flex-start; max-width:90%; background:rgba(13,19,43,0.9); border:1px solid var(--border-glass-glow); color:#f8fafc; padding:14px 18px; border-radius:12px 12px 12px 2px; font-size:13px; line-height:1.5;">
+        👋 <strong>Hello! I am your CyberArmor AI Security Copilot.</strong><br><br>
+        I am actively monitoring this Windows endpoint. You can ask me questions about running processes, suspicious network sockets, open ports, or security hardening.
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="copilot-input-bar">
+      <input type="text" id="copilotInput" class="form-input" placeholder="Ask AI Copilot about device security or PIDs..." onkeydown="if(event.key==='Enter') sendCopilotMessage();" style="font-size:12px;">
+      <button class="action-btn-primary" onclick="sendCopilotMessage()" style="padding:0 16px;">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" style="position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/device_views.js"></script>
+  <script src="/static/js/log_viewer.js"></script>
+  <script src="/static/js/process_tree.js"></script>
+  <script src="/static/js/copilot.js"></script>
+  <script src="/static/js/app.js"></script>
+
+  <!-- Inline Helper for Binary Inspection -->
+  <script>
+    async function inspectBinaryFile() {
+      const input = document.getElementById("binaryPathInput");
+      const out = document.getElementById("binaryInspectResult");
+      const path = input?.value?.trim();
+      if (!path) return;
+
+      out.innerHTML = `<span style="color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Calculating entropy & hash...</span>`;
+      try {
+        const res = await fetch("/api/edr/inspect-binary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file_path: path })
+        });
+        const data = await res.json();
+        if (data.status === "NOT_FOUND") {
+          out.innerHTML = `<span style="color:var(--neon-crimson);">${data.message}</span>`;
+          return;
+        }
+
+        out.innerHTML = `
+          <div style="background:rgba(5,7,17,0.8); border:1px solid var(--border-glass); border-radius:4px; padding:10px; font-size:11px; font-family:var(--font-mono);">
+            <div><strong>File:</strong> ${data.filename} (${data.size_kb} KB)</div>
+            <div style="margin-top:4px;"><strong>SHA-256:</strong> <span style="color:var(--neon-cyan); word-break:break-all;">${data.sha256}</span></div>
+            <div style="margin-top:4px;"><strong>Shannon Entropy:</strong> <span style="color:${data.is_packed ? 'var(--neon-crimson)' : 'var(--neon-emerald)'}; font-weight:700;">${data.shannon_entropy} / 8.0</span> (${data.is_packed ? 'PACKED/OBFUSCATED' : 'STANDARD'})</div>
+            <div style="margin-top:4px;"><strong>Verdict:</strong> <span class="badge-tag ${data.threat_intel_verdict === 'MALICIOUS' ? 'badge-Critical' : data.threat_intel_verdict === 'SUSPICIOUS' ? 'badge-High' : 'badge-Low'}">${data.threat_intel_verdict}</span></div>
+          </div>
+        `;
+      } catch (e) {
+        out.innerHTML = `<span style="color:var(--neon-crimson);">${e.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

