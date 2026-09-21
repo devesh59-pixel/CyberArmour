@@ -7,7 +7,14 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 CANARY_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".cyberarmor_canary"))
-os.makedirs(CANARY_DIR, exist_ok=True)
+try:
+    os.makedirs(CANARY_DIR, exist_ok=True)
+except OSError:
+    CANARY_DIR = "/tmp/.cyberarmor_canary"
+    try:
+        os.makedirs(CANARY_DIR, exist_ok=True)
+    except Exception:
+        pass
 
 # Known malicious threat intelligence hashes (Simulated Threat Intel Feed)
 KNOWN_MALWARE_HASHES = {

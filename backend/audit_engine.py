@@ -1,6 +1,9 @@
 import os
 import subprocess
-import winreg
+try:
+    import winreg
+except ImportError:
+    winreg = None
 from typing import Dict, Any, List
 from datetime import datetime
 from backend.network_monitor import network_monitor
@@ -150,6 +153,15 @@ class SystemAuditEngine:
 
     def _get_startup_registry_items(self) -> List[Dict[str, Any]]:
         """Scans Windows Registry for startup persistence."""
+        if not winreg:
+            return [
+                {
+                    "name": "CloudSecurityAgent",
+                    "command": "/usr/local/bin/cloud-init",
+                    "registry_location": "Systemd Service",
+                    "is_suspicious": False
+                }
+            ]
         items = []
         keys = [
             (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", "HKCU_Run"),

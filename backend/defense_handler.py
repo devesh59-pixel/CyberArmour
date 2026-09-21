@@ -1,13 +1,19 @@
 import os
 import shutil
 import subprocess
-import winreg
 import psutil
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 QUARANTINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".quarantine"))
-os.makedirs(QUARANTINE_DIR, exist_ok=True)
+try:
+    os.makedirs(QUARANTINE_DIR, exist_ok=True)
+except OSError:
+    QUARANTINE_DIR = "/tmp/.quarantine"
+    try:
+        os.makedirs(QUARANTINE_DIR, exist_ok=True)
+    except Exception:
+        pass
 
 class DefenseMatrixManager:
     """
