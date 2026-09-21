@@ -640,3 +640,250 @@ body {
   justify-content: space-between;
   align-items: flex-end;
 }
+
+/* ========================================================= */
+/* RESPONSIVE LAYOUT & MOBILE OPTIMIZATIONS                  */
+/* ========================================================= */
+
+.responsive-host-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-2col-split {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+}
+
+/* Smooth Touch Scrolling for Horizontal Bars */
+.nav-tabs-bar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.nav-tabs-bar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Tablets and Laptops (max-width: 1200px) */
+@media (max-width: 1200px) {
+  .soc-dashboard-grid,
+  .grid-2col-split {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+/* Tablets & Small Screens (max-width: 992px) */
+@media (max-width: 992px) {
+  .soc-header {
+    padding: 12px 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-status-group {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+    padding-top: 8px;
+    border-top: 1px solid rgba(56, 189, 248, 0.12);
+  }
+
+  .main-content {
+    padding: 18px 16px;
+    gap: 18px;
+  }
+
+  .nav-tabs-bar {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  .soc-header {
+    padding: 10px 14px;
+  }
+
+  .brand-text h1 {
+    font-size: 16px;
+    letter-spacing: 0.2px;
+  }
+
+  .brand-text p {
+    font-size: 9px;
+  }
+
+  .brand-logo {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .header-controls {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .header-controls .action-btn-sm,
+  .header-controls .btn-copilot {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .header-controls .btn-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .header-status-group {
+    gap: 6px;
+  }
+
+  .status-badge, .threat-gauge {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .nav-tabs-bar {
+    padding: 0 12px;
+    gap: 12px;
+  }
+
+  .nav-tab {
+    font-size: 12px;
+    padding: 12px 2px;
+  }
+
+  .main-content {
+    padding: 14px 12px;
+    gap: 14px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .kpi-card {
+    padding: 14px;
+  }
+
+  .kpi-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .kpi-value {
+    font-size: 22px;
+  }
+
+  .responsive-host-meta {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .card-header > div:last-child,
+  .card-header > button {
+    align-self: flex-start;
+  }
+
+  /* Full Screen Mobile Copilot Drawer */
+  .copilot-drawer {
+    width: 100vw;
+    right: -100vw;
+  }
+
+  .copilot-drawer.active {
+    right: 0;
+  }
+
+  .copilot-header {
+    padding: 14px 16px;
+  }
+
+  .copilot-input-bar {
+    padding: 12px 14px;
+  }
+
+  /* Data Tables Mobile Optimization */
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .data-table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Report paper */
+  .report-paper {
+    padding: 16px;
+  }
+
+  .report-header-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Filter toolbars wrap */
+  #process-tab .glass-card > div:nth-child(2),
+  #logs-tab .glass-card > div:nth-child(2) {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+
+  #processSearchInput,
+  #processRiskFilter,
+  #eventLogChannelSelect,
+  #eventLogSearch,
+  #eventLogLevelFilter {
+    width: 100% !important;
+  }
+}
+
+/* Extra Small Mobile Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  .soc-header {
+    padding: 8px 10px;
+  }
+
+  .brand-text p {
+    display: none;
+  }
+
+  .header-status-group {
+    flex-wrap: wrap;
+  }
+
+  .glass-card {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .sim-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+}
